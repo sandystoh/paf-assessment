@@ -19,7 +19,7 @@ module.exports = function(app, conns) {
 
     // TODO - Task 3
     // Song Upload
-    app.post('/api/upload', upload.single('musicFile'),
+    app.post('/api/upload', upload.single('musicFile'), mydb.unlinkFileOnResponse(), 
     (req, resp) => {
         // Puts uploadSong = Transaction Steps (songutil) into a Transaction (mkTransaction, mydbutil)
         // Returns resolve if whole transaction succeeded, reject if rollback
@@ -49,7 +49,8 @@ module.exports = function(app, conns) {
 
     // TODO - Task 5
     // List available songs for listening
-    app.get('/api/songs/available', (req, resp) => {
+    app.get('/api/songs/available', 
+        (req, resp) => {
         selectAllSongs()
         .then(r => {
             const s = r.result;
@@ -69,37 +70,70 @@ module.exports = function(app, conns) {
 
     // TODO - Task 6
     // Listening a song
-    // Route called upon clicking "Listen"
+    // Route called upon clicking "Listen" - Check Out Song and Redirect to next Route
     const listenSong = mydb.mkTransaction(song.checkoutSong(), conns.mysql);
 
-    app.post('/api/song/checkout/:id', express.json(), 
+    app.get('/api/song/checkout/:user/:id', express.json(), 
+    song.authenticateUser(conns.mysql), // Authenticates User
     (req, resp) => {
         const id = req.params.id;
-        listenSong({id, body: req.body, conns: conns}) 
+        const user = req.params.user;
+        listenSong({id, user, conns: conns}) 
         .then(r => {
-            resp.status(200).json({ frogs: r.result })
-        })
-        .catch(err => {
-            resp.status(500).json({error: err});
-        });
-    })    
-
-    // Route called upon redirect
-    const SELECT_SONG = `Select s.title, c.code, c.name, s.song_file, s.available_slots, s.listen_count
-                    from songs s join countries c on s.country_code = c.code 
-                    where s.id = ?`
-    const selectSongById = mydb.mkQuery(SELECT_SONG, conns.mysql);
-    
-    app.get('/api/song/:id', (req, resp) => {
-        const id = req.params.id;
-        selectSongById([id])
-        .then(r => {
-            console.log(r);
-            resp.status(200).json({ songs: r.result })
+            console.log(r.status);
+            resp.redirect(`/song/${r.status.id}/${r.status.transId}`)
         })
         .catch(err => {
             resp.status(500).json({error: err});
         });
     })
 
+    // Route called upon redirect to show song page
+    const SELECT_SONG = `Select s.title, c.code, c.name, s.song_file, s.available_slots, s.listen_count
+                    from songs s join countries c on s.country_code = c.code 
+                    where s.id = ?`
+    const selectSongById = mydb.mkQuery(SELECT_SONG, conns.mysql);
+    
+    app.get('/song/:id/:transId', (req, resp) => {
+        const id = req.params.id;
+        const transId = req.params.transId;
+        selectSongById([id])
+        .then(r => {
+            console.log(r);
+            resp.status(200).json({id, transId, song: r.result[0]});
+        })
+        .catch(err => {
+            resp.status(500).json({error: err});
+        });
+    })
+
+    // Route called upon clicking "Back" - Check In Song
+    const releaseSong = mydb.mkTransaction(song.checkinSong(), conns.mysql);
+
+    app.get('/api/song/checkin/:id/:transid', express.json(),
+    (req, resp, next) => {
+        // Middleware to Check if Already Checked in
+        const id = req.params.id;
+        const transId = req.params.transid;
+        return mydb.mongoFind({client: conns.mongodb, db: 'music', collection: 'listens',find: {listen_id: transId}})
+        .then(r => {
+            if (r[0].checkedin === undefined) {
+                console.log('Not checked in');
+                return next();
+            }
+            console.log('Checked in');
+            return resp.status(500).json({error: 'Already Checked in'});
+        });
+    },
+    (req, resp) => {
+        const id = req.params.id;
+        const transId = req.params.transid;
+        releaseSong({id, transId, conns: conns}) 
+        .then(r => {
+            resp.status(200).json({status: r.status})
+        })
+        .catch(err => {
+            resp.status(500).json({error: err});
+        });
+    })
 }
