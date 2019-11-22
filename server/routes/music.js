@@ -103,12 +103,12 @@ module.exports = function(app, conns) {
     })
 
     // Route called upon redirect to show song page
-    const SELECT_SONG = `Select s.title, c.code, c.name, s.song_file, s.available_slots, s.listen_count
+    const SELECT_SONG = `Select s.title, c.code, c.name, s.song_file, s.lyrics, s.available_slots, s.listen_count
                     from songs s join countries c on s.country_code = c.code 
                     where s.id = ?`
     const selectSongById = mydb.mkQuery(SELECT_SONG, conns.mysql);
     
-    app.get('/song/:id/:transId', (req, resp) => {
+    app.get('/api/song/:id/:transId', (req, resp) => {
         const id = req.params.id;
         const transId = req.params.transId;
         selectSongById([id])

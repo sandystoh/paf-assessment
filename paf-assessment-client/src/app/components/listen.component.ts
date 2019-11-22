@@ -16,7 +16,7 @@ export class ListenComponent implements OnInit {
   isLoading = true;
   isError = false;
   model = {
-    username: 'fred'
+    username: ''
   };
 
   constructor(private apiSvc: ApiService, private router: Router,
@@ -49,13 +49,5 @@ export class ListenComponent implements OnInit {
     }).catch(r => { // If had more time would throw specific error : listen count error or user error
       this.snackBar.open('Sorry unable to Listen!', 'OK', { duration: 2000 });
     });
-  }
-
-  toEdit(id) {
-    this.router.navigate(['/', id]);
-  }
-
-  toDelete(name, id) {
-
   }
 }

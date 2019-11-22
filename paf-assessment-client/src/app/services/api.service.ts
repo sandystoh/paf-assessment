@@ -38,7 +38,14 @@ export class ApiService {
     return this.http.get('/api/song/checkout/' + username + '/' + id).toPromise();
   }
 
-  
+  checkin(id, transId) {
+    return this.http.get('/api/song/checkin/' + id + '/' + transId).toPromise();
+  }
+
+
+  getSongDetail(id, transId) {
+    return this.http.get('/api/song/' + id + '/' + transId).toPromise();
+  }
 
   search(s) {
     const q = s.terms;
