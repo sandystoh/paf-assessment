@@ -9,40 +9,30 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./form.component.css']
 })
 export class FormComponent implements OnInit {
-  @ViewChild('imageFile', {static: false})
-  imageFile: ElementRef;
+  @ViewChild('musicFile', {static: false})
+  musicFile: ElementRef;
 
-
-  imagePath;
-  imgURL: any;
-  message: string;
+  countries;
+  // countries = [{code: 'SG', name: 'Singapore'}]; // Fallback Array
+  model = {
+    country_code: 'SG',
+    listen_slots: '3'
+  };
 
   constructor(private apiSvc: ApiService, private router: Router) { }
 
   ngOnInit() {
-  }
-
-  preview(files) {
-    if (files.length === 0) {
-      return;
-    }
-    const mimeType = files[0].type;
-    if (mimeType.match(/image\/*/) == null) {
-      this.message = 'Only images are supported.';
-      return;
-    }
-    const reader = new FileReader();
-    this.imagePath = files;
-    reader.readAsDataURL(files[0]);
-    reader.onload = (event) => {
-      this.imgURL = reader.result;
-    };
+    this.apiSvc.getCountries().then(r => {
+      console.log(r);
+      this.countries = r['countries'] as [];
+    });
   }
 
   performUpload(form: NgForm) {
     console.log(form.value);
-    console.log(this.imageFile.nativeElement.files[0]);
-    this.apiSvc.upload(form, this.imageFile).then(() => {
+    console.log(this.musicFile.nativeElement.files[0]);
+    console.log(form.value, this.musicFile.nativeElement.files[0]);
+    this.apiSvc.upload(form, this.musicFile).then(() => {
       this.router.navigate(['/list']);
     }).catch(err => console.log(err));
   }

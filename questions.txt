@@ -34,3 +34,16 @@ Using the information capture by your application's data model and the database 
 - number of the times it was listen
 - the last time (date and time) the song was listen
 
+Robo 3T Query:
+db.getCollection('listens').aggregate([
+    {
+        $group: {
+            _id: '$song_title',
+            times_listened: { $sum: 1 },
+            last_listened: {
+                $last: '$checkedout'
+            }
+        }
+    }
+])
+

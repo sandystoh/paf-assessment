@@ -8,7 +8,7 @@ import { FormComponent } from './components/form.component';
 const ROUTES: Routes = [
   { path: '', component: WelcomeComponent},
   { path: 'list', component: ListComponent},
-  { path: 'create', component: FormComponent},
+  { path: 'upload', component: FormComponent},
   { path: '**', redirectTo: '/', pathMatch: 'full' }
 ];
 

@@ -2,24 +2,33 @@
     <div class="pad" fxLayout="column" fxLayoutAlign="center">
         <mat-card class="card">
             <mat-card-header>
-                <mat-card-title>Write an Article</mat-card-title>
+                <mat-card-title>Upload an Anthem</mat-card-title>
             </mat-card-header>
             <mat-card-content>
                 <form #uploadForm="ngForm" (ngSubmit)="performUpload(uploadForm)">
                     <div fxLayout="column" fxLayoutGap="2vw" class="full_width">                   
                     <mat-form-field>
-                    <input matInput placeholder="title" type="text" name="title" id="title" #title ngModel required><br>
+                    <input matInput placeholder="Title" type="text" name="title" id="title" #title ngModel required><br>
                     </mat-form-field>
                     <mat-form-field>
-                    <input matInput placeholder="email" type="email" name="email" id="email" #email ngModel required><br>
+                            <mat-select placeholder="Country" name = "country_code" id="country_code" [(ngModel)]="model.country_code" required>
+                                    <mat-option *ngFor="let c of countries" [value]="c.code"> {{ c.name }}</mat-option>
+                                </mat-select>
                     </mat-form-field>
                     <mat-form-field>
-                    <textarea matInput placeholder="article" name="article" id="article" #article cols="30" rows="10" ngModel required></textarea><br>
+                            <mat-select placeholder="Listen Slots" name = "listen_slots" [(ngModel)]="model.listen_slots" id="listen_slots" required>
+                                <mat-option value="1">1</mat-option>
+                                <mat-option value="2">2</mat-option>
+                                <mat-option value="3">3</mat-option>
+                                <mat-option value="4">4</mat-option>
+                                <mat-option value="5">5</mat-option>
+                            </mat-select>
                     </mat-form-field>
-                    <label for="artImage">Upload Image</label>
-                    <input placeholder="image" type="file" accept='image/*' (change)="preview(imageFile.files)" name="artImage" id="artImage" #imageFile ngModel required>
-                    <span style="color:red;" *ngIf="message">{{message}}</span>
-                    <img [src]="imgURL" width="250" *ngIf="imgURL">
+                    <mat-form-field>
+                    <textarea matInput placeholder="Lyrics" name="lyrics" id="lyrics" #article cols="30" rows="10" ngModel></textarea><br>
+                    </mat-form-field>
+                    <label for="musicFile">Upload Mp3 of Anthem</label>
+                    <input type="file" accept='audio/mpeg' name="musicFile" id="musicFile" #musicFile ngModel required>
                     <button mat-raised-button [disabled]="uploadForm.invalid" color="accent" type="submit">Submit</button>
                     </div>
                 </form>

@@ -14,8 +14,22 @@ const song = require('../db/songutil');
 module.exports = function(app, conns) {
     const ROUTE_URL = '/api/music';
 
-    const SELECT_SONGS = 'Select s.id, s.title, c.name, s.listen_slots, s.available_slots from songs s join countries c on s.country_code = c.code'
-    const selectAllSongs = mydb.mkQuery(SELECT_SONGS, conns.mysql);
+        // TEST HARNESS
+        app.post('/api/test',upload.single('musicFile'), mydb.unlinkFileOnResponse(), (req, resp) => {
+            console.log(req.body)
+        });
+
+    // Get Countries
+    app.get('/api/countries', (req, resp) => {
+        sql.select(conns.mysql, 'countries')
+        .then(r => {
+            resp.status(200).json({countries: r.result});
+        })
+        .catch(err => {
+            console.log(err);
+            resp.status(500).json({error: err.error});
+        });
+    });
 
     // TODO - Task 3
     // Song Upload
