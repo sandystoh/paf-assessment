@@ -27,6 +27,8 @@ module.exports = function(app, conns) {
         });
     });
 
+    // Task 1 (c, d, e) >> Please see bottom of file, a and b are covered by other tasks
+
     // TODO - Task 3
     // Song Upload
     app.post('/api/upload', upload.single('musicFile'), mydb.unlinkFileOnResponse(), 
@@ -150,4 +152,62 @@ module.exports = function(app, conns) {
             resp.status(500).json({error: err});
         });
     })
+
+    // Task 1 - All Songs Checked out By User
+    app.get('/api/user/:username', (req, resp) => {
+        const username = req.params.username;
+        // m = mongo object = {client, db, collection, find, skip, limit, sort, project, count}
+        mydb.mongoFind({client: conns.mongodb, db: 'music', collection: 'listens',
+                find: {username: username, checkedin:{ $exists: false}}})
+        .then(result => {
+            console.log(result);
+            this.songs = []
+            for(r of result) {
+                this.songs.push({title: r.song_title, check_out_date: r.checkedout});
+            }
+            resp.status(200).json({songs_listening: songs});
+        })
+        .catch(err => {
+            resp.status(500).json({error: err});
+        });
+    });
+
+        // Task 1 - All Songs Checked out By User (History)
+        app.get('/api/user/history/:username', (req, resp) => {
+            const username = req.params.username;
+            // m = mongo object = {client, db, collection, find, skip, limit, sort, project, count}
+            mydb.mongoFind({client: conns.mongodb, db: 'music', collection: 'listens',
+                    find: {username: username}})
+            .then(result => {
+                console.log(result);
+                this.songs = []
+                for(r of result) {
+                    this.songs.push({title: r.song_title, check_out_date: r.checkedout});
+                }
+                resp.status(200).json({songs_listened_to: songs});
+            })
+            .catch(err => {
+                resp.status(500).json({error: err});
+            });
+        });
+    
+
+    // Task 1 - All Users Listening to Song
+    app.get('/api/listening/:id', (req, resp) => {
+        const id = parseInt(req.params.id);
+        // m = mongo object = {client, db, collection, find, skip, limit, sort, project, count}
+        mydb.mongoFind({client: conns.mongodb, db: 'music', collection: 'listens',
+                find: {song_id: id, checkedin:{ $exists: false}}})
+        .then(result => {
+            console.log(result);
+            this.users = []
+            for(r of result) {
+                this.users.push(r.username);
+            }
+            resp.status(200).json({users_listening: users});
+        })
+        .catch(err => {
+            resp.status(500).json({error: err});
+        });
+    });
 }
