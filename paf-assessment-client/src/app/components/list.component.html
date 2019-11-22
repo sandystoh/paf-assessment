@@ -34,8 +34,8 @@
                     <td><img src="https://sandy-paf-2019.sgp1.digitaloceanspaces.com/flags/{{s.code.toLowerCase()}}.png" width="40px"></td>
                     <td>{{s.title}}</td>
                     <td>{{s.name}}</td>
-                    <td>{{s.listen_slots}}</td>
                     <td>{{s.available_slots}}</td>
+                    <td>{{s.listen_slots - s.available_slots}}</td>
                 </tr>
         </tbody>
         </table>
