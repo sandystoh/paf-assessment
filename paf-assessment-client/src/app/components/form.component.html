@@ -1,0 +1,29 @@
+<div class="list-area">
+    <div class="pad" fxLayout="column" fxLayoutAlign="center">
+        <mat-card class="card">
+            <mat-card-header>
+                <mat-card-title>Write an Article</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <form #uploadForm="ngForm" (ngSubmit)="performUpload(uploadForm)">
+                    <div fxLayout="column" fxLayoutGap="2vw" class="full_width">                   
+                    <mat-form-field>
+                    <input matInput placeholder="title" type="text" name="title" id="title" #title ngModel required><br>
+                    </mat-form-field>
+                    <mat-form-field>
+                    <input matInput placeholder="email" type="email" name="email" id="email" #email ngModel required><br>
+                    </mat-form-field>
+                    <mat-form-field>
+                    <textarea matInput placeholder="article" name="article" id="article" #article cols="30" rows="10" ngModel required></textarea><br>
+                    </mat-form-field>
+                    <label for="artImage">Upload Image</label>
+                    <input placeholder="image" type="file" accept='image/*' (change)="preview(imageFile.files)" name="artImage" id="artImage" #imageFile ngModel required>
+                    <span style="color:red;" *ngIf="message">{{message}}</span>
+                    <img [src]="imgURL" width="250" *ngIf="imgURL">
+                    <button mat-raised-button [disabled]="uploadForm.invalid" color="accent" type="submit">Submit</button>
+                    </div>
+                </form>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+.mat-card {
+    background-color: rgba(255,255,255,0.7);
+    min-width: 85vw;
+}
+.list-area {
+    padding: 20px;
+    height: 85vh;
+    overflow-y: scroll;
+}
+
+.pad {
+    padding-bottom: 150px;
+}
+
+.progress {
+    padding: 30px;
+}
+
+.card {
+    margin: 10px;
+}
+
+.edit-btn {
+    cursor:pointer;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.edit-btn:hover {
+    background-color: #ffc100;
+}
+
+.delete-btn {
+    cursor:pointer;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.delete-btn:hover {
+    background-color: #cd5c5c;
+}
+
+.bold {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-left: 60px;
+}
+
+@media only screen and (max-width: 600px) {
+
+    .list-area {
+        padding-bottom: 200px;
+    }
+}

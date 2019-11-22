@@ -1,0 +1,10 @@
+server/db/config.js
+server/node_modules
+server/package-lock.json
+server/.env
+paf-assessment-client/node_modules
+paf-assessment-client/package-lock.json
+
+server/chuk-main-for-reference.js
+server/routes/chuksample.js
+server/routes/sample.js

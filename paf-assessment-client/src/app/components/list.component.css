@@ -1,0 +1,71 @@
+.mat-card {
+    background-color: rgba(255,255,255,0.7);
+    font-family: 'Muli', sans-serif;
+    font-size: 1rem;
+    min-width: 450px;
+    max-width: 70vw;
+    margin: auto;
+    text-align: left;
+}
+
+.mat-card-image {
+    max-width: 600px;
+}
+
+.list-area {
+    padding: 20px;
+    height: 85vh;
+    overflow-y: scroll;
+}
+
+.pad {
+    padding-bottom: 150px;
+}
+
+.progress {
+    padding: 30px;
+}
+
+.card {
+    margin: 10px;
+}
+
+.card:hover {
+    background-color: rgba(255,191,0,0.7);
+}
+
+.edit-btn {
+    cursor:pointer;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.edit-btn:hover {
+    background-color: #ffc100;
+}
+
+.delete-btn {
+    cursor:pointer;
+    padding: 10px;
+    border-radius: 15px;
+}
+
+.delete-btn:hover {
+    background-color: #cd5c5c;
+}
+
+.bold {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-left: 60px;
+}
+
+@media only screen and (max-width: 450px) {
+    .mat-card {
+        min-width: 250px;
+        max-width: 90vw;
+    }
+    .list-area {
+        padding-bottom: 200px;
+    }
+}
