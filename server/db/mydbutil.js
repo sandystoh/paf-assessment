@@ -15,7 +15,7 @@ const mkTransaction = function(transaction, pool) {
                         console.error(err);
                         conn.rollback(() => conn.release()); 
                         return reject({error: err, connection: conn});
-                    } 
+                    }
                     status.connection = conn;
                     transaction(status)
                     .then(()=> {

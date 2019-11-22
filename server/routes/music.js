@@ -9,7 +9,7 @@ const { join } = require('path');
 const db = require('../db/dbutil');
 const mydb = require('../db/mydbutil');
 const sql = require('../db/sqlutil');
-const article = require('../db/articleutil');
+const song = require('../db/songutil');
 
 module.exports = function(app, conns) {
     const ROUTE_URL = '/api/music';
@@ -19,7 +19,20 @@ module.exports = function(app, conns) {
 
     // TODO - Task 3
     // Song Upload
-
+    app.post('/api/upload', upload.single('musicFile'),
+    (req, resp) => {
+        // Puts uploadSong = Transaction Steps (songutil) into a Transaction (mkTransaction, mydbutil)
+        // Returns resolve if whole transaction succeeded, reject if rollback
+        const insertSong = mydb.mkTransaction(song.uploadSong(), conns.mysql);
+        insertSong({body: req.body, file: req.file, conns: conns}) 
+        .then(() => {
+            resp.status(200).json({b: req.body, f: req.file});
+        })
+        .catch(err => {
+            console.log(err);
+            resp.status(500).json({error: err.error});
+        });
+    } );
 
     // TODO - Task 4
     // List all songs
@@ -56,9 +69,28 @@ module.exports = function(app, conns) {
 
     // TODO - Task 6
     // Listening a song
+    // Route called upon clicking "Listen"
+    app.get('/api/song/checkout/:id', (req, resp) => {
+        const id = req.params.id;
+        selectSongById([id])
+        .then(r => {
+            console.log(r);
+            resp.status(200).json({ songs: r.result })
+        })
+        .catch(err => {
+            resp.status(500).json({error: err});
+        });
+    })    
+
+    // Route called upon redirect
+    SELECT_SONG = `Select s.title, c.code, c.name, s.song_file, s.available_slots, s.listen_count
+                    from songs s join countries c on s.country_code = c.code 
+                    where s.id = ?`
+    selectSongById = mydb.mkQuery(SELECT_SONG, conns.mysql);
+    
     app.get('/api/song/:id', (req, resp) => {
         const id = req.params.id;
-        selectAllSongs()
+        selectSongById([id])
         .then(r => {
             console.log(r);
             resp.status(200).json({ songs: r.result })
@@ -67,4 +99,5 @@ module.exports = function(app, conns) {
             resp.status(500).json({error: err});
         });
     })
+
 }

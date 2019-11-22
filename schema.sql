@@ -33,12 +33,12 @@ create table songs (
     available_slots int not null,
     listen_count int not null default 0,
     lyrics text,
+    posted datetime default current_timestamp,
     PRIMARY KEY(id),
     CONSTRAINT FK_PersonOrder 
     FOREIGN KEY (country_code) REFERENCES countries(code),
     key(country_code)
 );
-
 
 INSERT INTO countries (code, name) VALUES
 ('JP', 'Japan'),
