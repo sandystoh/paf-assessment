@@ -1,32 +1,57 @@
 Task 1
 Write your schemas below. Consider your MySQL database as part of the given music database.
 
-Please see server/schema.sql
+Please see schema.sql for full schema and country data
+added tables:
+create table countries (
+    code char(2) not null,
+    name varchar(256) not null,
+    PRIMARY KEY(code)
+);
+
+create table songs (
+    id int auto_increment not null,
+    title varchar(128) not null,
+    country_code char(2) not null,
+    song_file varchar(128) not null,
+    listen_slots int not null,
+    available_slots int not null,
+    listen_count int not null default 0,
+    lyrics text,
+    posted datetime default current_timestamp,
+    PRIMARY KEY(id),
+    CONSTRAINT FK_PersonOrder 
+    FOREIGN KEY (country_code) REFERENCES countries(code),
+    key(country_code)
+);
 
 Explain briefly your choice of persistence store.
 Core data for running of the website is stored in MySQL (db music)
 Tables:
 1. users: for Authentication
-2. songs: Information about uploaded songs
+2. songs: Information about uploaded songs (Foreign key to countries(code) to enforce only countries in that table)
 -- This database only stores the key information for listens 
 -- i.e. the Number of total listen slots and the number of slots available
 -- the logging of listens will be done in MongoDB
-3. country: ISO Country List (Foreign Key from Song Lists)
+3. countries: ISO Country List (code is Foreign Key from Song Lists)
 -- currently allows duplicate anthems, would put "unique" on column if required no duplicates
 
 Logs for Listening History will be in MongoDB ('music' db, 'listens' collection)
-This is generally immutable information and will be a large amount of data 
-thus is better stored in MongoDB.
-Decided not to duplicate data thus the Current Checkouts and the Currently Listening Users will pull from this table
-listen format {
-	user_name: string,
-	song_title: string,
-	country_code: string,
-	checkedout: datetime,
-	checkedin: datetime
+This is generally immutable information and will be a large amount of data thus is better stored in MongoDB.
+Decided not to duplicate data thus the TASK 1 Data: C, D, E will pull from this table as well
+log format:
+{
+    _id: ObjectId,
+    listen_id: string, // transaction ID
+	username: string, // must be username from MySQL users table (enforced in server)
+    song_id: number, // For Reporting
+	song_title: string, // For Reporting
+	country_code: string, // For Reporting
+	checkedout: datetime, // For Reporting - populated upon create
+	checkedin: datetime // For checking if song is checkedout and Reporting - only populated when checked in
 }
 
-All Images and Songs were stored as S3 files 
+All Images and Songs were stored as S3 files for ease of calling from front end.
 
 Task 7
 Using the information capture by your application's data model and the database connections/pool declared in your application, show using JavaScript, the ranking of national anthems by their listening popularity across your service's user base. You should rank your the songs from the most popular to the least popular. The ranking information must include the following 
