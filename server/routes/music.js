@@ -14,8 +14,8 @@ const song = require('../db/songutil');
 module.exports = function(app, conns) {
     const ROUTE_URL = '/api/music';
 
-    SELECT_SONGS = 'Select s.id, s.title, c.name, s.listen_slots, s.available_slots from songs s join countries c on s.country_code = c.code'
-    selectAllSongs = mydb.mkQuery(SELECT_SONGS, conns.mysql);
+    const SELECT_SONGS = 'Select s.id, s.title, c.name, s.listen_slots, s.available_slots from songs s join countries c on s.country_code = c.code'
+    const selectAllSongs = mydb.mkQuery(SELECT_SONGS, conns.mysql);
 
     // TODO - Task 3
     // Song Upload
@@ -70,12 +70,14 @@ module.exports = function(app, conns) {
     // TODO - Task 6
     // Listening a song
     // Route called upon clicking "Listen"
-    app.get('/api/song/checkout/:id', (req, resp) => {
+    const listenSong = mydb.mkTransaction(song.checkoutSong(), conns.mysql);
+
+    app.post('/api/song/checkout/:id', express.json(), 
+    (req, resp) => {
         const id = req.params.id;
-        selectSongById([id])
+        listenSong({id, body: req.body, conns: conns}) 
         .then(r => {
-            console.log(r);
-            resp.status(200).json({ songs: r.result })
+            resp.status(200).json({ frogs: r.result })
         })
         .catch(err => {
             resp.status(500).json({error: err});
@@ -83,10 +85,10 @@ module.exports = function(app, conns) {
     })    
 
     // Route called upon redirect
-    SELECT_SONG = `Select s.title, c.code, c.name, s.song_file, s.available_slots, s.listen_count
+    const SELECT_SONG = `Select s.title, c.code, c.name, s.song_file, s.available_slots, s.listen_count
                     from songs s join countries c on s.country_code = c.code 
                     where s.id = ?`
-    selectSongById = mydb.mkQuery(SELECT_SONG, conns.mysql);
+    const selectSongById = mydb.mkQuery(SELECT_SONG, conns.mysql);
     
     app.get('/api/song/:id', (req, resp) => {
         const id = req.params.id;
