@@ -10,7 +10,7 @@
         <h3>Loading Please Wait!</h3>
         </mat-card>
     </div>
-    <div *ngIf="articleList === undefined && !isLoading && !isError">
+    <div *ngIf="songList === undefined && !isLoading && !isError">
         <mat-card>
             No Items in List!
         </mat-card>
@@ -22,17 +22,23 @@
                 <h3>Please try again later!</h3>
             </mat-card>
     </div>
-    <div class="pad" fxLayout="row column" fxLayoutAlign="center flex-start" *ngIf="articleList">
-        <mat-card class="card" *ngFor="let a of articleList; let i = index">
-                <mat-card-header>
-                    <div mat-card-avatar><img src="https://ui-avatars.com/api/?name={{a.email}}&background=0D8ABC&color=fff&rounded=true" width="40px"></div>
-                    <mat-card-title>{{a.title}}</mat-card-title>
-                    <mat-card-subtitle>By: {{a.email}}({{a.posted | date:"medium" }})</mat-card-subtitle>
-                </mat-card-header>
-                <img mat-card-image src="https://sandy-paf-2019.sgp1.digitaloceanspaces.com/posts/{{a.image}}">
-                <mat-card-content>
-                    {{a.comment}}
-                </mat-card-content>
+    <div class="pad" fxLayout="row column" fxLayoutAlign="center flex-start" *ngIf="songList">
+        <mat-card class="card">
+            <h1>Uploaded Songs</h1>
+            <table border="1">
+                <thead>
+                    <th>Flag</th><th>Title</th><th>Country</th><th>Listen Slots</th><th>Checked Out</th>
+                </thead>
+                <tbody>
+                <tr  *ngFor="let s of songList; let i = index">
+                    <td><img src="https://sandy-paf-2019.sgp1.digitaloceanspaces.com/flags/{{s.code.toLowerCase()}}.png" width="40px"></td>
+                    <td>{{s.title}}</td>
+                    <td>{{s.name}}</td>
+                    <td>{{s.listen_slots}}</td>
+                    <td>{{s.available_slots}}</td>
+                </tr>
+        </tbody>
+        </table>
         </mat-card>
     </div>
     </div>

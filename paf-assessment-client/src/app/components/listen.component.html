@@ -1,0 +1,49 @@
+<div class="list-area">
+        <div *ngIf="isLoading">
+            <mat-card fxLayout="column" 
+            class="progress" fxLayoutAlign="center center" >
+            
+                <mat-progress-spinner 
+                color="accent"
+                mode="indeterminate">
+            </mat-progress-spinner>
+            <h3>Loading Please Wait!</h3>
+            </mat-card>
+        </div>
+        <div *ngIf="songList === undefined && !isLoading && !isError">
+            <mat-card>
+                No Items in List!
+            </mat-card>
+        </div>
+        <div *ngIf="isError" class="error-card">
+                <mat-card>
+                    <img src="/assets/images/error-404.png" width="200px"><br>
+                    <h3>We have encountered an error.</h3> 
+                    <h3>Please try again later!</h3>
+                </mat-card>
+        </div>
+        <div class="pad" fxLayout="row column" fxLayoutAlign="center flex-start" *ngIf="songList">
+            <mat-card class="card">
+                <h1>Listen to Songs</h1> 
+                <form #userForm="ngForm">
+                    <mat-form-field>
+                            <input matInput placeholder="Username (Required to Listen)" type="text" name="username" id="username" #username [(ngModel)]="model.username" required><br>
+                    </mat-form-field>
+                <table border="1">
+                    <thead>
+                        <th>Flag</th><th>Title</th><th>Country</th><th>Available</th>
+                    </thead>
+                    <tbody>
+                    <tr  *ngFor="let s of songList; let i = index">
+                        <td><img src="https://sandy-paf-2019.sgp1.digitaloceanspaces.com/flags/{{s.code.toLowerCase()}}.png" width="40px"></td>
+                        <td>{{s.title}}</td>
+                        <td>{{s.country}}</td>
+                        <td *ngIf="s.available"><button mat-raised-button type="button" [disabled]="userForm.invalid" (click)="checkoutSong(s.id, userForm.value.username)" color="accent">Listen</button></td>
+                        <td *ngIf="!s.available">Not available</td>
+                    </tr>
+                    </tbody>
+                    </table>
+                </form>
+            </mat-card>
+        </div>
+        </div>

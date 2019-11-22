@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import { ApiService } from '../services/api.service';
+import { Song } from '../models/models';
 
 @Component({
   selector: 'app-list',
@@ -10,7 +11,7 @@ import { ApiService } from '../services/api.service';
 })
 export class ListComponent implements OnInit {
 
-  articleList: any;
+  songList: Song[];
   records: any;
   isLoading = true;
   isError = false;
@@ -24,9 +25,10 @@ export class ListComponent implements OnInit {
   }
 
   getList() {
-    this.apiSvc.getPosts().then(r => {
-      this.articleList = r['sample'] as [];
-      this.articleList.sort((a, b) => b.posted - a.posted);
+    this.apiSvc.getSongs().then(r => {
+      console.log(r);
+      this.songList = r['songs'] as Song[];
+      this.songList.sort((a, b) => a.name.localeCompare(b.name));
       this.isLoading = false;
     })
     .catch(err => {
@@ -34,13 +36,5 @@ export class ListComponent implements OnInit {
       this.isLoading = false;
       this.isError = true;
     });
-  }
-
-  toEdit(id) {
-    this.router.navigate(['/', id]);
-  }
-
-  toDelete(name, id) {
-
   }
 }

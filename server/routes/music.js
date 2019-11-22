@@ -14,15 +14,11 @@ const song = require('../db/songutil');
 module.exports = function(app, conns) {
     const ROUTE_URL = '/api/music';
 
-        // TEST HARNESS
-        app.post('/api/test',upload.single('musicFile'), mydb.unlinkFileOnResponse(), (req, resp) => {
-            console.log(req.body)
-        });
-
     // Get Countries
     app.get('/api/countries', (req, resp) => {
         sql.select(conns.mysql, 'countries')
         .then(r => {
+            this.songs = r.songs
             resp.status(200).json({countries: r.result});
         })
         .catch(err => {
@@ -50,6 +46,9 @@ module.exports = function(app, conns) {
 
     // TODO - Task 4
     // List all songs
+    const SELECT_SONGS = 'Select s.id, s.title, c.name, c.code, s.listen_slots, s.available_slots from songs s join countries c on s.country_code = c.code'
+    const selectAllSongs = mydb.mkQuery(SELECT_SONGS, conns.mysql);
+
     app.get('/api/songs', (req, resp) => {
         selectAllSongs()
         .then(r => {
@@ -73,6 +72,7 @@ module.exports = function(app, conns) {
                 id: v.id,
                 title: v.title,
                 country: v.name,
+                code: v.code,
                 available: (v.available_slots > 0) ? true : false }
             });
             resp.status(200).json(availSongs)
@@ -95,7 +95,7 @@ module.exports = function(app, conns) {
         listenSong({id, user, conns: conns}) 
         .then(r => {
             console.log(r.status);
-            resp.redirect(`/song/${r.status.id}/${r.status.transId}`)
+            resp.status(200).json({id: r.status.id, transId: r.status.transId}); // redirect(`/song/${r.status.id}/${r.status.transId}`)
         })
         .catch(err => {
             resp.status(500).json({error: err});

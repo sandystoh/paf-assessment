@@ -16,13 +16,17 @@ import { WelcomeComponent } from './components/welcome.component';
 import { ListComponent } from './components/list.component';
 import { FormComponent } from './components/form.component';
 import { ApiService } from './services/api.service';
+import { ListenComponent } from './components/listen.component';
+import { SongComponent } from './components/song.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     WelcomeComponent,
     ListComponent,
-    FormComponent
+    FormComponent,
+    ListenComponent,
+    SongComponent
   ],
   imports: [
     BrowserModule,

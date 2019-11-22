@@ -11,13 +11,16 @@ export class ApiService {
   getCountries() {
     return this.http.get('/api/countries').toPromise();
   }
-
-
-
-  getPosts() {
+  getSongs() {
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
     headers.set('Accept', 'application/json');
-    return this.http.get('/api/sample/mongo', {headers}).toPromise();
+    return this.http.get('/api/songs', {headers}).toPromise();
+  }
+
+  getAvailableSongs() {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    headers.set('Accept', 'application/json');
+    return this.http.get('/api/songs/available', {headers}).toPromise();
   }
 
   upload(form: NgForm, fileRef: ElementRef) {
@@ -30,6 +33,12 @@ export class ApiService {
 
     return this.http.post<any>('/api/upload', formData).toPromise();
   }
+
+  checkout(id, username) {
+    return this.http.get('/api/song/checkout/' + username + '/' + id).toPromise();
+  }
+
+  
 
   search(s) {
     const q = s.terms;
